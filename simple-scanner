@@ -1,0 +1,41 @@
+import os
+
+url = input("Enter website URL (Start with http or https): ")
+
+# 1. Check HTTPS
+if url.startswith("https://"):
+    print("HTTPS is used")
+else:
+    print("INFO: HTTPS is not used")
+
+# 2. Use Curl to check headers
+print("\nChecking headers using curl...\n")
+try:
+    result = os.popen(f"curl -I -s {url}").read()
+    print(result)
+
+    # 3. Check for security headers
+    print("Checking for important security headers...\n")
+
+    if "X-Content-Type-Options" in result:
+        print("X-Content-Type-Options is present")
+    else:
+        print("Missing: X-Content-Type-Options")
+
+    if "X-Frame-Options" in result:
+        print("X-Frame-Options is present")
+    else:
+        print("Missing: X-Frame-Options")
+
+    if "Strict-Transport-Security" in result:
+        print("Strict-Transport-Security is present")
+    else:
+        print("Missing: Strict-Transport-Security")
+
+    if "Content-Security-Policy" in result:
+        print("Content-Security-Policy is present")
+    else:
+        print("Missing: Content-Security-Policy")
+        
+print("\n Scan completed.")
+
