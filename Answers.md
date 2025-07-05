@@ -3,7 +3,7 @@
 
 ### This repo is for the application security technical challenge given by Interact
 
-### Question 1: (Answering this question will be a mix from my eJPT exam and how i was able to identify and exploit vulnerabilities in order to pass the exam and also some logic vulnerabilities identified during my actual work)
+### Question 1: (Answering this question will be straight from my work experience throughout my career)
 Identify at least 5 distinct vulnerabilities.
 For each vulnerability, provide:
 o Vulnerability name
