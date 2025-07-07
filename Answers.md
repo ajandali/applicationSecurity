@@ -14,30 +14,39 @@ o Remediation recommendation
 
 #### Vulnerability 1: (at maya)
 Name: Face Auth Bypass
+
 How i found it: Tasked to pentest it using Deepfake or images with different brightness settings or live detection with different brightness settings as well
+
 Impact Assessment: Critical Severity, impacts all ios users of our digital banking application that do multiple operations such as send money, apply for a loan, view virtual credit card details and password reset.
+
 Proof of concept:
 1. Connect your iphone to your macbook (for deubugging purposes)
-2. Record a video on your macbook cam with deepface live
-3. Run the app on your phone
-4. Point the camera towards the video recorded on your macbook
-5. Adjust the brightness on the video to fool the face auth
-6. Bypass complete and you can now reset the account's password
+3. Record a video on your macbook cam with deepface live
+4. Run the app on your phone
+5. Point the camera towards the video recorded on your macbook
+6. Adjust the brightness on the video to fool the face auth
+7. Bypass complete and you can now reset the account's password
 
 Remediation Recommendation: Add OTP on top of face auth (temporarily) then Connect with Tencent to resolve the issue and fix liveness detection and then test again to confirm that the face auth cannot be bypassed again
 
 #### Vulnerability 2: (At TORO)
 Name: Stored XSS
+
 How i Found it: I was pentesting petshed.com (legacy website)
+
 Impact Assessment: Critical Severity, impacts the company's reputation
+
 Proof of concept (POC):
 Go to a product page and post in the comments section and post the following script <script>Test Alert()</script>
 Remediation Recommendation: Apply HTTP Security headers and aws WAF rules
 
 #### Vulnerability 3: (At Maya)
 Name: Captcha Bypass
+
 How I found it: While testing the reset password flow I found out that i can bypass captcha by deleting the csrf token sent as a cookie and teh cpatcha was completely bypassed
+
 Impact Assessment: High Severity, Impacts all users on all devices, bypasses rate limiting for OTP for all password reset attempts
+
 Proof of Concept:
 1. Connect your phone to your macbook and start adb shell and setup your phone proxy to use burp and intercept the traffic
 2. Attempt to reset the password and solve the captcha once to capture a request
@@ -51,8 +60,11 @@ Remediation Recommendation:
 
 #### Vulnerability 4: (At Maya)
 Name: Default login credentials on collibra.paymaya.com
+
 How I found it: I was testing rate limiting on the login page by bruteforcing it using hydra and i was able to get the credentials and they were the default credentials and i was able to run bruteforce attack endlessly.
+
 Impact of assessment: Critical Severity, exposes sensitive information.
+
 Proof of concept:
 1. Go to collibra.paymaya.com
 2. run Hydra bruteforce attack on the domain using the unixusers.txt unixpass.txt wordlists available on kali linux.
@@ -64,8 +76,11 @@ Remediation recommendation:
 
 #### Vulnerability 5: (At Maya)
 Name:Tax fees bypass (business logic flaw)
+
 How i found it: Testing the credit and lending function on our app, this exploit does not require interception of requests
+
 Impact of assessment: Medium severity, causes financial losses to the organization.
+
 Proof of concept:
 1. Login to your banking app
 2. go to credit tab and borrow 0.5 php
