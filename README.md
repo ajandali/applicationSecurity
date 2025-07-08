@@ -3,7 +3,7 @@ This readme file explains my answers and thought process behind each one of them
 
 **Question 1** 
 
-was answered from my own actual latest experience with exploits and bugs, I asked myself, what are the most impressive hacks or exploits i did in this company? and thats i came up with the vulnerabilities, the vulnerabilities might not be an actual cve vulnerabilities but i think they are some important findings that i have discovered during my pentest activities.
+was answered by having the owasp top 10 in my mind, i looked for technical vulnerabilities as i was checking for exploits and flaws on the webapp and api endpoints and the only tool i used was burp suite.
 
 **Question 2** 
 
