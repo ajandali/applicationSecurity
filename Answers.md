@@ -3,7 +3,7 @@
 
 ### This repo is for the application security technical challenge given by Interact
 
-### Question 1: (Answering this question will be straight from my work experience throughout my career)
+### Question 1: 
 Identify at least 5 distinct vulnerabilities.
 For each vulnerability, provide:
 o Vulnerability name
@@ -12,84 +12,102 @@ o Impact assessment
 o Proof of Concept (PoC) or exploitation steps
 o Remediation recommendation
 
-#### Vulnerability 1: (at maya)
-Name: Face Auth Bypass
+#### Vulnerability 1:
+Name: SQL injection (Login page)
 
-How i found it: Tasked to pentest it using Deepfake or images with different brightness settings or live detection with different brightness settings as well
+How i found it: I just tried SQLi at the login page and i logged in successfully
 
-Impact Assessment: Critical Severity, impacts all ios users of our digital banking application that do multiple operations such as send money, apply for a loan, view virtual credit card details and password reset.
+Impact Assessment: Critical Severity, directly impacts the database of the webapp which leads to critical data leak
 
 Proof of concept:
-1. Connect your iphone to your macbook (for deubugging purposes)
-3. Record a video on your macbook cam with deepface live
-4. Run the app on your phone
-5. Point the camera towards the video recorded on your macbook
-6. Adjust the brightness on the video to fool the face auth
-7. Bypass complete and you can now reset the account's password
+1. Navigate to the login page
+2. type ' or 1=1-- at the username
+3. Type anything at the password field and hit enter and you will login successfully and as an admin.
 
-Remediation Recommendation: Add OTP on top of face auth (temporarily) then Connect with Tencent to resolve the issue and fix liveness detection and then test again to confirm that the face auth cannot be bypassed again
+   <img width="1438" alt="image" src="https://github.com/user-attachments/assets/17466fd6-30d0-416b-8a59-068e1e787a40" />
+   <img width="1360" alt="image" src="https://github.com/user-attachments/assets/49674817-01ec-4646-81f8-df9d5f88a397" />
 
-#### Vulnerability 2: (At TORO)
-Name: Stored XSS
 
-How i Found it: I was pentesting petshed.com (legacy website)
 
-Impact Assessment: Critical Severity, impacts the company's reputation
+Remediation Recommendation: Sanitize input and paramterize the query and for additional protection, implement rate limiting and MFA
+
+#### Vulnerability 2:
+Name: Directory Listing Leak
+
+How i Found it: Tried to access http://ec2-34-251-197-70.eu-west-1.compute.amazonaws.com/ftp/
+
+Impact Assessment: Critical Severity, impacts org information leak
 
 Proof of concept (POC):
-Go to a product page and post in the comments section and post the following script <script>Test Alert()</script>
-Remediation Recommendation: Apply HTTP Security headers and aws WAF rules
+1. Go to profile page
+2. Read the java script and you will notice there is a directory called ftp
+3. Try to access it through the url
 
-#### Vulnerability 3: (At Maya)
-Name: Captcha Bypass
+Recommended Remediation:
+1. Implement Authentication and Authorization
+2. Hide the ftp directory and restrict its access (Access Control List)
 
-How I found it: While testing the reset password flow I found out that i can bypass captcha by deleting the csrf token sent as a cookie and teh cpatcha was completely bypassed
+#### Vulnerability 3:
+Name: JWT Token Bypass
 
-Impact Assessment: High Severity, Impacts all users on all devices, bypasses rate limiting for OTP for all password reset attempts
+How I found it: While testing the add item to basket api i saw the jwt token and i thought of decoding it and changing the token to see if the server validates the token or not
+
+Impact Assessment: Critical Severity, the impact includes, privilege escalation, Account takeover and authentication bypass
 
 Proof of Concept:
-1. Connect your phone to your macbook and start adb shell and setup your phone proxy to use burp and intercept the traffic
-2. Attempt to reset the password and solve the captcha once to capture a request
-3. Intercept the request and delete the csrf token
-4. bruteforce the OTP
-5. reset the password successfully
+1. Setup burp suite
+2. Add an item to the cart
+3. Capture the valid request with the jwt token
+4. go to jwt.io and forge your own token
+5. modify alg:RS256 to alg:none
+6. send the post request to the repeater
+7. change the auth token and replace it with the forged one
+8. send the request and the request will be successful
+
+<img width="1308" alt="image" src="https://github.com/user-attachments/assets/efbd2c74-01d5-438e-bf35-19e4cdc97cb2" />
+<img width="1156" alt="image" src="https://github.com/user-attachments/assets/21362548-5644-4a1f-be03-0ba68b7eda32" />
+
+
+
 
 Remediation Recommendation:
-1. Validate the tokens on the server side or backend logic
-2. Rate limiting for OTP should be set separately for OTP (Dont reply on captcha to rate limit the otp requests)
+1. Validate the tokens signature
+2. never allow alg:none
 
-#### Vulnerability 4: (At Maya)
-Name: Default login credentials on collibra.paymaya.com
+#### Vulnerability 4:
+Name: Lack of rate limiting
 
-How I found it: I was testing rate limiting on the login page by bruteforcing it using hydra and i was able to get the credentials and they were the default credentials and i was able to run bruteforce attack endlessly.
+How I found it: I tried to bruteforce the login page
 
-Impact of assessment: Critical Severity, exposes sensitive information.
+Impact of assessment: High, usernames and passwords can be bruteforced, system can experience DDOS attacks
 
 Proof of concept:
-1. Go to collibra.paymaya.com
-2. run Hydra bruteforce attack on the domain using the unixusers.txt unixpass.txt wordlists available on kali linux.
+1. Write a simple bruteforce script to test the rate limit
+2. Execute the script
+3. Watch for headers response timing to see if there is rate limit or throttling or not or simply watch how many requests your script can send before you get an error response
+
+<img width="539" alt="image" src="https://github.com/user-attachments/assets/19fad5da-1fd4-48b2-b586-e09d7dd114cb" />
+
+
+
 
 Remediation recommendation:
-1. Change the credentials to be more complicated credentials.
-2. Set rate limiting for login attempts
-3. Set cooldown after the limit has been reached
+1. Apply rate limiting and throttling
+2. Use complicated passwords and MFA or even passkey logins
 
-#### Vulnerability 5: (At Maya)
-Name:Tax fees bypass (business logic flaw)
+#### Vulnerability 5:
+Name:Insecure password reset
 
-How i found it: Testing the credit and lending function on our app, this exploit does not require interception of requests
+How i found it: Tried resetting the password
 
-Impact of assessment: Medium severity, causes financial losses to the organization.
+Impact of assessment: High, security question can be bypassed easily using social engineering methods, will lead to account takeover
 
 Proof of concept:
-1. Login to your banking app
-2. go to credit tab and borrow 0.5 php
-3. notice the credit document the app sends via email is free of charges
-4. keep borrowing and you'd notice that there is no rate limiting as to how many times you can request the endpoint.
+1. in the login page click Forgot Password
 
 Remediation recommendations:
-1. Change the minimum borrowing to 1php insted of 0.1php and apply tax fees
-2. set rate limiting for the borrowing function to avoid bot automation
+1. Apply rate limiting on the endpoint
+2. Replace the security question with OTP or email verification or passkey
 
 ### Part 2: Secure Code Review (Static Analysis)
 1. ```SECRET_KEY = 'my$ecretKey' ``` Saving the secret directly in the code, must use environment in python os.environ to inject the secrets, Risk Level: High
